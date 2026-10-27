@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Investment Research — {{ payload.fundamentals.ticker }} ({{ payload.fundamentals.company_name }})</title>
+    <link rel="stylesheet" href="{{ css_path }}">
+</head>
+<body>
+
+    <!-- ==================== PÁGINA 1 ==================== -->
+    <header class="report-header">
+        <div class="header-left">
+            <div class="brand-badge">PRIVATE EQUITY RESEARCH & PORTFOLIO LAB</div>
+            <h1 class="company-title">{{ payload.fundamentals.company_name }}</h1>
+            <div class="ticker-subline">
+                <strong>{{ payload.fundamentals.ticker }}</strong> (NYSE/NASDAQ) 
+                {% if payload.fundamentals.cedear_ratio %}
+                • <strong>CEDEAR BYMA Ratio {{ payload.fundamentals.cedear_ratio|int }}:1</strong>
+                {% endif %}
+                • {{ payload.fundamentals.sector }} | {{ payload.fundamentals.industry }} • {{ payload.fundamentals.country }}
+            </div>
+        </div>
+        <div class="header-right">
+            {% set r = analysis.header.rating|upper %}
+            {% if "COMPRA" in r %}
+                <div class="rating-badge rating-compra-fuerte">{{ analysis.header.rating }}</div>
+            {% elif "ACUMULAR" in r %}
+                <div class="rating-badge rating-acumular">{{ analysis.header.rating }}</div>
+            {% elif "VENTA" in r %}
+                <div class="rating-badge rating-venta">{{ analysis.header.rating }}</div>
+            {% else %}
+                <div class="rating-badge rating-neutral">{{ analysis.header.rating }}</div>
+            {% endif %}
+
+            <!-- Tarjeta Destacada de Precio vs. Target & Upside -->
+            <div class="target-highlight-card">
+                <div class="target-highlight-label">Target 12-18M / Upside</div>
+                <div class="target-highlight-row">
+                    <span class="target-highlight-val">${{ "%.2f"|format(analysis.header.target_price_12m) }}</span>
+                    <span class="target-highlight-upside">+{{ "%.1f"|format(analysis.header.expected_return_pct) }}%</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Tesis Ejecutiva One-Liner -->
+    <div class="thesis-card">
+        <strong>Tesis Central:</strong> "{{ analysis.header.investment_thesis_one_liner }}"
+    </div>
+
+    <!-- Barra de Métricas Rápidas (KPIs) -->
+    <div class="kpi-grid">
+        <div class="kpi-box">
+            <div class="kpi-label">Precio Actual</div>
+            <div class="kpi-value">${{ "%.2f"|format(payload.technicals.current_close) }}</div>
+            <div class="kpi-sub">USD Mercado</div>
+        </div>
+        <div class="kpi-box">
+            <div class="kpi-label">Market Cap</div>
+            <div class="kpi-value">${{ "%.1f"|format(payload.fundamentals.valuation.market_cap / 1e9) if payload.fundamentals.valuation.market_cap else "N/A" }}B</div>
+            <div class="kpi-sub">Capitalización</div>
+        </div>
+        <div class="kpi-box">
+            <div class="kpi-label">P/E Forward</div>
+            <div class="kpi-value">{{ "%.1f"|format(payload.fundamentals.valuation.forward_pe) if payload.fundamentals.valuation.forward_pe else "N/A" }}x</div>
+            <div class="kpi-sub">Trailing: {{ "%.1f"|format(payload.fundamentals.valuation.trailing_pe) if payload.fundamentals.valuation.trailing_pe else "N/A" }}x</div>
+        </div>
+        <div class="kpi-box">
+            <div class="kpi-label">Moat Score</div>
+            <div class="kpi-value">{{ analysis.moat.moat_score }}/10</div>
+            <div class="kpi-sub">{{ analysis.moat.moat_type }}</div>
+        </div>
+        <div class="kpi-box">
+            <div class="kpi-label">RSI 14D</div>
+            <div class="kpi-value">{{ "%.1f"|format(payload.technicals.rsi_14) if payload.technicals.rsi_14 else "N/A" }}</div>
+            <div class="kpi-sub">{{ payload.technicals.trend_regime }}</div>
+        </div>
+        <div class="kpi-box">
+            <div class="kpi-label">Salud Contable</div>
+            <div class="kpi-value">{{ analysis.fundamentals.financial_health_score }}/10</div>
+            <div class="kpi-sub">Solvencia & Balances</div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 1: Modelo de Negocio & Economic Moat -->
+    <section class="section-block">
+        <div class="section-header">
+            <div class="section-title">1. Modelo de Negocio & Ventaja Competitiva (Moat)</div>
+            <div class="section-tag">VENTAJAS DEFENSIVAS</div>
+        </div>
+        <div class="content-grid-2">
+            <div class="card">
+                <div class="card-title">
+                    <span>Estructura Operativa & Ecosistema</span>
+                    <span class="badge-pill">Foso: {{ analysis.moat.moat_type }}</span>
+                </div>
+                <p style="font-size: 8.2pt; color: #334155; margin-bottom: 5px;">
+                    {{ analysis.moat.business_model_summary }}
+                </p>
+                <div style="font-size: 7.8pt; color: #64748b;">
+                    <strong>Presencia Geográfica:</strong> {{ analysis.moat.geographic_exposure }}
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">
+                    <span>Catalizadores Clave de Facturación</span>
+                    <span class="badge-pill">Moat {{ analysis.moat.moat_score }}/10</span>
+                </div>
+                <ul class="bullet-list">
+                    {% for driver in analysis.moat.revenue_drivers %}
+                    <li>{{ driver }}</li>
+                    {% endfor %}
+                </ul>
+                <div style="margin-top: 5px; font-size: 7.8pt; color: #475569; font-style: italic;">
+                    {{ analysis.moat.moat_analysis }}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 2: Lectura Fundamental & Gráfico de Balances -->
+    <section class="section-block">
+        <div class="section-header">
+            <div class="section-title">2. Desempeño Financiero & Rentabilidad Histórica</div>
+            <div class="section-tag">ESTADOS CONTABLES</div>
+        </div>
+        
+        <div class="chart-container">
+            <img class="chart-image" src="{{ financial_chart_path }}" alt="Evolución Financiera">
+        </div>
+
+        <div class="content-grid-2" style="margin-top: 5px;">
+            <div class="card">
+                <div class="card-title">Crecimiento & Márgenes</div>
+                <p style="font-size: 8.2pt; color: #334155; margin-bottom: 4px;">
+                    <strong>Ventas:</strong> {{ analysis.fundamentals.revenue_growth_assessment }}
+                </p>
+                <p style="font-size: 8.2pt; color: #334155;">
+                    <strong>Rentabilidad:</strong> {{ analysis.fundamentals.profitability_and_margins }}
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-title">Generación de Caja & Deuda</div>
+                <p style="font-size: 8.2pt; color: #334155; margin-bottom: 4px;">
+                    <strong>Flujo Libre (FCF):</strong> {{ analysis.fundamentals.cash_flow_and_capex }}
+                </p>
+                <p style="font-size: 8.2pt; color: #334155;">
+                    <strong>Endeudamiento:</strong> {{ analysis.fundamentals.solvency_and_debt }}
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SALTO DE PÁGINA CONTROLADO ==================== -->
+    <div class="page-break"></div>
+
+    <!-- ==================== PÁGINA 2 ==================== -->
+    <!-- SECCIÓN 3: Valuación Relativa -->
+    <section class="section-block">
+        <div class="section-header">
+            <div class="section-title">3. Valuación Relativa & Múltiplos Bursátiles</div>
+            <div class="section-tag">{{ analysis.valuation.valuation_status }}</div>
+        </div>
+        <div class="card">
+            <!-- Tira de Múltiplos Clave Formateados a 1 Decimal -->
+            <div style="display: flex; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9;">
+                <div style="flex: 1; background: #f8fafc; padding: 5px 8px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: center;">
+                    <div style="font-size: 6.8pt; color: #64748b; font-weight: 700; text-transform: uppercase;">P/E Trailing</div>
+                    <div style="font-size: 9.8pt; font-weight: 800; color: #0f172a;">{{ "%.1f"|format(payload.fundamentals.valuation.trailing_pe) if payload.fundamentals.valuation.trailing_pe else "N/A" }}x</div>
+                </div>
+                <div style="flex: 1; background: #f8fafc; padding: 5px 8px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: center;">
+                    <div style="font-size: 6.8pt; color: #64748b; font-weight: 700; text-transform: uppercase;">P/E Forward</div>
+                    <div style="font-size: 9.8pt; font-weight: 800; color: #0f172a;">{{ "%.1f"|format(payload.fundamentals.valuation.forward_pe) if payload.fundamentals.valuation.forward_pe else "N/A" }}x</div>
+                </div>
+                <div style="flex: 1; background: #f8fafc; padding: 5px 8px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: center;">
+                    <div style="font-size: 6.8pt; color: #64748b; font-weight: 700; text-transform: uppercase;">EV / EBITDA</div>
+                    <div style="font-size: 9.8pt; font-weight: 800; color: #0f172a;">{{ "%.1f"|format(payload.fundamentals.valuation.ev_to_ebitda) if payload.fundamentals.valuation.ev_to_ebitda else "N/A" }}x</div>
+                </div>
+                <div style="flex: 1; background: #f8fafc; padding: 5px 8px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: center;">
+                    <div style="font-size: 6.8pt; color: #64748b; font-weight: 700; text-transform: uppercase;">PEG Ratio</div>
+                    <div style="font-size: 9.8pt; font-weight: 800; color: #0f172a;">{{ "%.1f"|format(payload.fundamentals.valuation.peg_ratio) if payload.fundamentals.valuation.peg_ratio else "N/A" }}x</div>
+                </div>
+                <div style="flex: 1; background: #f8fafc; padding: 5px 8px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: center;">
+                    <div style="font-size: 6.8pt; color: #64748b; font-weight: 700; text-transform: uppercase;">Price to Book</div>
+                    <div style="font-size: 9.8pt; font-weight: 800; color: #0f172a;">{{ "%.1f"|format(payload.fundamentals.valuation.price_to_book) if payload.fundamentals.valuation.price_to_book else "N/A" }}x</div>
+                </div>
+            </div>
+            <p style="font-size: 8.6pt; color: #1e293b; margin-bottom: 5px;">
+                {{ analysis.valuation.pe_assessment }}
+            </p>
+            <p style="font-size: 8.2pt; color: #475569;">
+                <strong>Justificación de Múltiplos:</strong> {{ analysis.valuation.discount_or_premium_reason }}
+            </p>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 4: Lectura Cuantitativa y Gráfico Técnico -->
+    <section class="section-block">
+        <div class="section-header">
+            <div class="section-title">4. Estructura Técnica, Medias Móviles & RSI</div>
+            <div class="section-tag">{{ payload.technicals.trend_regime }}</div>
+        </div>
+
+        <div class="chart-container">
+            <img class="chart-image" src="{{ technical_chart_path }}" alt="Análisis Técnico">
+        </div>
+
+        <div class="content-grid-2" style="margin-top: 5px;">
+            <div class="card">
+                <div class="card-title">Dinámica de Tendencia & Medias</div>
+                <p style="font-size: 8.2pt; color: #334155; margin-bottom: 4px;">
+                    {{ analysis.technicals.trend_diagnosis }}
+                </p>
+                <div style="font-size: 7.8pt; color: #64748b;">
+                    SMA 50: ${{ "%.2f"|format(payload.technicals.sma_50) if payload.technicals.sma_50 else "N/A" }} • SMA 200: ${{ "%.2f"|format(payload.technicals.sma_200) if payload.technicals.sma_200 else "N/A" }}
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">Momentum & Niveles Operativos</div>
+                <p style="font-size: 8.2pt; color: #334155; margin-bottom: 4px;">
+                    {{ analysis.technicals.momentum_and_rsi }}
+                </p>
+                <div style="font-size: 7.8pt; color: #0369a1; font-weight: 700;">
+                    Soportes: {{ payload.technicals.key_supports|join(", $") }} | Resistencias: {{ payload.technicals.key_resistances|join(", $") }}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 5: Escenarios Proyectivos & Veredicto Operativo -->
+    <section class="section-block">
+        <div class="section-header">
+            <div class="section-title">5. Escenarios de Retorno & Plan de Ejecución</div>
+            <div class="section-tag">VEREDICTO OPERATIVO</div>
+        </div>
+
+        <div class="scenario-grid">
+            <div class="scenario-card scenario-bull">
+                <div class="scenario-heading">Escenario Alcista (Bull)</div>
+                <div class="scenario-target">${{ "%.2f"|format(analysis.verdict.bull_case.target_price) }}</div>
+                <div class="scenario-prob">Probabilidad: {{ analysis.verdict.bull_case.probability_pct }}%</div>
+                <ul class="bullet-list" style="font-size: 7.5pt;">
+                    {% for item in analysis.verdict.bull_case.catalysts_or_risks %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="scenario-card scenario-base">
+                <div class="scenario-heading">Escenario Base (Consenso)</div>
+                <div class="scenario-target">${{ "%.2f"|format(analysis.verdict.base_case.target_price) }}</div>
+                <div class="scenario-prob">Probabilidad: {{ analysis.verdict.base_case.probability_pct }}%</div>
+                <ul class="bullet-list" style="font-size: 7.5pt;">
+                    {% for item in analysis.verdict.base_case.catalysts_or_risks %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="scenario-card scenario-bear">
+                <div class="scenario-heading">Escenario Bajista (Stress)</div>
+                <div class="scenario-target">${{ "%.2f"|format(analysis.verdict.bear_case.target_price) }}</div>
+                <div class="scenario-prob">Probabilidad: {{ analysis.verdict.bear_case.probability_pct }}%</div>
+                <ul class="bullet-list" style="font-size: 7.5pt;">
+                    {% for item in analysis.verdict.bear_case.catalysts_or_risks %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- TARJETA DE COMANDO TÁCTICO DE CARTERA (REDISEÑO) -->
+        <div class="command-card">
+            <div class="command-header">
+                <div class="command-title">PLAN TÁCTICO DE ENTRADA & CONTROL DE RIESGO</div>
+                {% set act = cedear.operational_action if cedear and cedear.operational_action else "ANALIZAR" %}
+                {% if "COMPRAR" in act or "INCREMENTAR" in act %}
+                    <span class="command-action-pill pill-buy">{{ act }}</span>
+                {% elif "RECORTAR" in act or "VENTA" in act %}
+                    <span class="command-action-pill pill-trim">{{ act }}</span>
+                {% else %}
+                    <span class="command-action-pill pill-hold">{{ act }}</span>
+                {% endif %}
+            </div>
+
+            <div class="command-grid">
+                <!-- 1. Zona Óptima de Entrada -->
+                <div class="command-metric-box">
+                    <div class="cmd-label">Zona Óptima de Entrada</div>
+                    <div class="cmd-val">${{ "%.2f"|format(analysis.verdict.entry_zone_min) }} - ${{ "%.2f"|format(analysis.verdict.entry_zone_max) }}</div>
+                    <div class="cmd-sub">Precio Subyacente USD</div>
+                </div>
+
+                <!-- 2. Stop-Loss Técnico Exacto (Resaltado Rojo) -->
+                <div class="command-metric-box metric-stoploss">
+                    <div class="cmd-label">Stop-Loss Técnico Exacto</div>
+                    <div class="cmd-val">${{ "%.2f"|format(analysis.verdict.stop_loss_exact) }}</div>
+                    <div class="cmd-sub">Corte de Pérdidas Estricto</div>
+                </div>
+
+                <!-- 3. Sizing Máximo en Cartera -->
+                <div class="command-metric-box metric-sizing">
+                    <div class="cmd-label">Sizing Máx en Cartera</div>
+                    <div class="cmd-val">{{ "%.1f"|format(analysis.verdict.suggested_portfolio_weight_pct) }}%</div>
+                    <div class="cmd-sub">
+                        {% if cedear and cedear.current_weight_pct is not none %}
+                        Actual: {{ cedear.current_weight_pct }}%
+                        {% else %}
+                        Ponderación Objetivo
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- 4. Relación Riesgo / Beneficio -->
+                <div class="command-metric-box">
+                    <div class="cmd-label">Riesgo / Beneficio</div>
+                    <div class="cmd-val" style="color: #059669;">
+                        {% set downside = payload.technicals.current_close - analysis.verdict.stop_loss_exact %}
+                        {% set upside = analysis.header.target_price_12m - payload.technicals.current_close %}
+                        {% if downside > 0 and upside > 0 %}
+                        1 : {{ "%.1f"|format(upside / downside) }}
+                        {% else %}
+                        Asimétrico
+                        {% endif %}
+                    </div>
+                    <div class="cmd-sub">Potencial / Riesgo</div>
+                </div>
+            </div>
+
+            <!-- Datos Específicos para CEDEARs / BYMA -->
+            {% if payload.fundamentals.cedear_ratio %}
+            <div class="cedear-bar">
+                <div>
+                    <span class="cedear-tag">MERCADO BYMA:</span> CEDEAR Ratio {{ payload.fundamentals.cedear_ratio|int }}:1
+                </div>
+                <div>
+                    <strong>Precio Estimado CEDEAR:</strong> ${{ "%.2f"|format(payload.technicals.current_close / payload.fundamentals.cedear_ratio) }} USD
+                </div>
+                <div>
+                    {% if cedear and cedear.suggested_cedear_nominal_qty %}
+                    <strong>Nominales Sugeridos:</strong> ~{{ cedear.suggested_cedear_nominal_qty }} títulos
+                    {% else %}
+                    <strong>Nominales Sugeridos:</strong> Ajustar según capital
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="trade-verdict-text">
+                <strong>Recomendación Ejecutiva:</strong> {{ analysis.verdict.operational_verdict }}
+            </div>
+        </div>
+    </section>
+
+    <!-- Disclaimer al pie -->
+    <footer style="margin-top: 10px; padding-top: 6px; border-top: 1px solid #e2e8f0; font-size: 6.2pt; color: #94a3b8; line-height: 1.3;">
+        <strong>USO EXCLUSIVO PERSONAL — GESTIÓN DE CARTERA:</strong> Este informe es de carácter estrictamente informativo y personal para análisis cuantitativo y cualitativo de activos. No constituye oferta pública ni asesoramiento bursátil para terceros. Las estimaciones de precios están sujetas a riesgos macroeconómicos y de mercado.
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "include": [
+    "."
+  ],
+  "extraPaths": [
+    "C:\\Users\\User\\AppData\\Roaming\\Python\\Python310\\site-packages",
+    "."
+  ],
+  "pythonVersion": "3.10",
+  "pythonPlatform": "Windows"
+}

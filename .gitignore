@@ -1,0 +1,31 @@
+# Entorno y credenciales confidenciales
+.env
+.env.local
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Salidas de reportes generados y descargas locales
+output/
+charts/*.png
+charts/*.pdf
+*.pdf
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

@@ -1,0 +1,582 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@page {
+    size: A4 portrait;
+    margin: 10mm 12mm 12mm 12mm;
+    @bottom-left {
+        content: "USO EXCLUSIVO PERSONAL — GESTIÓN DE CARTERA";
+        font-family: 'Inter', sans-serif;
+        font-size: 6.8pt;
+        color: #94a3b8;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    @bottom-right {
+        content: "Página " counter(page) " de " counter(pages);
+        font-family: 'Inter', sans-serif;
+        font-size: 7.2pt;
+        color: #64748b;
+        font-weight: 700;
+    }
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #0f172a;
+    background-color: #ffffff;
+    font-size: 9.2pt;
+    line-height: 1.42;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* ==========================================================================
+   HEADER PRINCIPAL & FICHA EJECUTIVA
+   ========================================================================== */
+.report-header {
+    background: linear-gradient(135deg, #090d16 0%, #0f172a 60%, #1e293b 100%);
+    color: #ffffff;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.brand-badge {
+    font-size: 6.8pt;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    color: #38bdf8;
+    font-weight: 800;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.brand-badge::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #38bdf8;
+    border-radius: 50%;
+}
+
+.company-title {
+    font-size: 16.5pt;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+    line-height: 1.1;
+}
+
+.ticker-subline {
+    font-size: 8.2pt;
+    color: #94a3b8;
+    margin-top: 3px;
+    font-weight: 400;
+}
+
+.ticker-subline strong {
+    color: #f1f5f9;
+}
+
+/* Header Derecho: Calificación y Tarjeta de Target */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rating-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 9.5pt;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.rating-compra-fuerte {
+    background: #059669;
+    color: #ffffff;
+}
+
+.rating-acumular {
+    background: #7c3aed;
+    color: #ffffff;
+}
+
+.rating-neutral {
+    background: #d97706;
+    color: #ffffff;
+}
+
+.rating-venta {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+/* Tarjeta Destacada de Precio vs. Target */
+.target-highlight-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    padding: 6px 12px;
+    text-align: right;
+    min-width: 145px;
+}
+
+.target-highlight-label {
+    font-size: 6.5pt;
+    text-transform: uppercase;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.target-highlight-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.target-highlight-val {
+    font-size: 13.5pt;
+    font-weight: 900;
+    color: #38bdf8;
+    letter-spacing: -0.3px;
+}
+
+.target-highlight-upside {
+    font-size: 8pt;
+    font-weight: 800;
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.15);
+    padding: 1px 5px;
+    border-radius: 4px;
+}
+
+/* ==========================================================================
+   TESIS CENTRAL ONE-LINER
+   ========================================================================== */
+.thesis-card {
+    background: #f8fafc;
+    border-left: 4px solid #0284c7;
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    font-size: 9pt;
+    font-style: italic;
+    color: #0f172a;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ==========================================================================
+   KPI BAR (MÉTRICAS CLAVE)
+   ========================================================================== */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 7px;
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+}
+
+.kpi-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 7px 8px;
+    text-align: center;
+}
+
+.kpi-label {
+    font-size: 6.2pt;
+    text-transform: uppercase;
+    color: #64748b;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    margin-bottom: 2px;
+}
+
+.kpi-value {
+    font-size: 10pt;
+    font-weight: 900;
+    color: #0f172a;
+}
+
+.kpi-sub {
+    font-size: 6.2pt;
+    color: #94a3b8;
+    margin-top: 1px;
+}
+
+/* ==========================================================================
+   SECCIONES Y TARJETAS
+   ========================================================================== */
+.section-block {
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1.5px solid #0f172a;
+    padding-bottom: 3px;
+    margin-bottom: 7px;
+}
+
+.section-title {
+    font-size: 9.8pt;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #0f172a;
+}
+
+.section-tag {
+    margin-left: auto;
+    font-size: 6.5pt;
+    font-weight: 800;
+    color: #0284c7;
+    background: #e0f2fe;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.content-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+}
+
+.card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 9px 11px;
+    page-break-inside: avoid;
+}
+
+.card-title {
+    font-size: 8.2pt;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.badge-pill {
+    font-size: 6.5pt;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.bullet-list {
+    list-style: none;
+    margin-top: 3px;
+}
+
+.bullet-list li {
+    position: relative;
+    padding-left: 13px;
+    margin-bottom: 3px;
+    font-size: 8.2pt;
+    color: #334155;
+    line-height: 1.35;
+}
+
+.bullet-list li::before {
+    content: "•";
+    position: absolute;
+    left: 3px;
+    color: #0284c7;
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   GRÁFICOS
+   ========================================================================== */
+.chart-container {
+    text-align: center;
+    margin: 6px 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #ffffff;
+    padding: 4px;
+    page-break-inside: avoid;
+}
+
+.chart-image {
+    width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+    display: block;
+}
+
+/* ==========================================================================
+   ESCENARIOS DE RETORNO (BULL / BASE / BEAR)
+   ========================================================================== */
+.scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 9px;
+    page-break-inside: avoid;
+}
+
+.scenario-card {
+    border-radius: 6px;
+    padding: 8px 10px;
+    border: 1px solid #e2e8f0;
+    page-break-inside: avoid;
+}
+
+.scenario-bull {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.scenario-base {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.scenario-bear {
+    background: #fef2f2;
+    border-color: #fca5a5;
+}
+
+.scenario-heading {
+    font-size: 7.2pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.scenario-bull .scenario-heading { color: #15803d; }
+.scenario-base .scenario-heading { color: #0369a1; }
+.scenario-bear .scenario-heading { color: #b91c1c; }
+
+.scenario-target {
+    font-size: 12.5pt;
+    font-weight: 900;
+    margin-bottom: 2px;
+}
+
+.scenario-bull .scenario-target { color: #166534; }
+.scenario-base .scenario-target { color: #0f172a; }
+.scenario-bear .scenario-target { color: #991b1b; }
+
+.scenario-prob {
+    font-size: 7pt;
+    color: #64748b;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   TARJETA DE COMANDO TÁCTICO DE CARTERA (REDESIGN)
+   ========================================================================== */
+.command-card {
+    background: #ffffff;
+    border: 1.5px solid #0f172a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 6px;
+    page-break-inside: avoid;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.command-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 6px;
+}
+
+.command-title {
+    font-size: 8.8pt;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.command-title::before {
+    content: "⚡";
+    font-size: 9pt;
+}
+
+.command-action-pill {
+    font-size: 7.2pt;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pill-buy {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+}
+
+.pill-hold {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+}
+
+.pill-trim {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+}
+
+/* Grilla de Métricas Tácticas */
+.command-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.command-metric-box {
+    border-radius: 6px;
+    padding: 7px 9px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+/* Resalte especial para Stop-Loss */
+.metric-stoploss {
+    background: #fef2f2;
+    border: 1.5px solid #f87171;
+}
+
+.metric-stoploss .cmd-label {
+    color: #991b1b;
+}
+
+.metric-stoploss .cmd-val {
+    color: #dc2626;
+}
+
+/* Resalte especial para Sizing */
+.metric-sizing {
+    background: #eff6ff;
+    border: 1px solid #93c5fd;
+}
+
+.metric-sizing .cmd-label {
+    color: #1e40af;
+}
+
+.metric-sizing .cmd-val {
+    color: #1d4ed8;
+}
+
+.cmd-label {
+    font-size: 6.2pt;
+    text-transform: uppercase;
+    color: #64748b;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    margin-bottom: 2px;
+}
+
+.cmd-val {
+    font-size: 11pt;
+    font-weight: 900;
+    color: #0f172a;
+}
+
+.cmd-sub {
+    font-size: 6.2pt;
+    color: #94a3b8;
+    margin-top: 1px;
+}
+
+/* Fila de Datos CEDEAR & BYMA */
+.cedear-bar {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 6px;
+    margin-top: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7.8pt;
+    color: #475569;
+}
+
+.cedear-tag {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.trade-verdict-text {
+    font-size: 8.2pt;
+    color: #334155;
+    line-height: 1.38;
+    margin-top: 6px;
+    padding: 6px 8px;
+    background: #f8fafc;
+    border-radius: 4px;
+    border-left: 3px solid #0284c7;
+}
+
+/* ==========================================================================
+   PRINT & PAGE BREAK RULES
+   ========================================================================== */
+.page-break {
+    page-break-before: always;
+}
+
+@media print {
+    body {
+        font-size: 9pt;
+        background: #ffffff !important;
+    }
+    .section-block, .card, .command-card, .kpi-grid, .scenario-grid, .chart-container {
+        page-break-inside: avoid !important;
+    }
+    .page-break {
+        page-break-before: always !important;
+    }
+}
