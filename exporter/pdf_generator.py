@@ -62,10 +62,19 @@ def render_to_pdf(html_path: Path, output_pdf_path: Optional[Path] = None) -> Pa
     html_uri = html_path.resolve().as_uri()
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True,
-            args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
-        )
+        try:
+            browser = p.chromium.launch(
+                headless=True,
+                args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
+            )
+        except Exception:
+            # Si el binario de Chromium no está instalado en el contenedor (ej: Streamlit Cloud), descargarlo
+            import subprocess
+            subprocess.run(["playwright", "install", "chromium"], check=True)
+            browser = p.chromium.launch(
+                headless=True,
+                args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
+            )
         page = browser.new_page()
         # Cargar documento local y esperar a que todas las fuentes e imágenes estén renderizadas
         page.goto(html_uri, wait_until="networkidle")
